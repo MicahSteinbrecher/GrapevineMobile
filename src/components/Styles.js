@@ -37,12 +37,11 @@ var Styles = StyleSheet.create({
         borderWidth: 1
     },
     listItem: {
-        height:200,
+        minHeight:40,
         borderColor: 'gray',
         borderBottomWidth: 1
     },
     firstListItem: {
-        height:500,
         borderColor: 'gray',
         borderBottomWidth: 1,
         borderTopWidth: 1
