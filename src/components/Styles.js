@@ -51,12 +51,13 @@ var Styles = StyleSheet.create({
         height: 500,
     },
     title: {
-        fontSize: 16,
+        fontWeight: 'bold',
+        fontSize: 18,
         paddingLeft: 10,
         paddingTop: 10,
     },
     time: {
-        fontSize: 10,
+        fontSize: 14,
         paddingLeft: 10,
         paddingTop: 10,
     }

@@ -17,6 +17,7 @@ const MainScreenNavigator = StackNavigator(
 
 export default class App extends React.Component {
     render() {
+        console.log('fired navigator');
         return (
             <MainScreenNavigator />
         )

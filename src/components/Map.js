@@ -4,24 +4,29 @@ import MapView from 'react-native-maps';
 import EventDescription from './EventDescription';
 import Styles from './Styles';
 import { StackNavigator } from 'react-navigation';
+import createFragment from 'react-addons-create-fragment'; // ES6
+
 
 export default class Map extends React.Component {
     static navigationOptions = {
-        header: {
+        header: () => createFragment({
             visible: false,
-        }
+        })
     };
 
     constructor(props) {
+        console.log('fired constructor');
         super(props);
         this.state = {
             isLoading: true,
             events: []
         }
         this.onRegionChangeComplete = this.onRegionChangeComplete.bind(this);
+        console.log('fired constructor success');
     }
 
     componentWillMount() {
+        console.log('fired component mount');
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 this.setState({
@@ -47,6 +52,7 @@ export default class Map extends React.Component {
                     });
             }
         );
+        console.log('fired component mount success');
 
     }
 

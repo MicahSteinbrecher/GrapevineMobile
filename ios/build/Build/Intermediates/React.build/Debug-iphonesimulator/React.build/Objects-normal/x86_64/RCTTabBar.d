@@ -1,0 +1,22 @@
+dependencies: \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Views/RCTTabBar.m \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Views/RCTTabBar.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Base/RCTEventDispatcher.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Base/RCTBridge.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Base/RCTBridgeDelegate.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Base/RCTJavaScriptLoader.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Base/RCTDefines.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Base/RCTBridgeModule.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Base/RCTFrameUpdate.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Base/RCTInvalidating.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Base/RCTLog.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Base/RCTAssert.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Views/RCTTabBarItem.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Views/RCTComponent.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Base/RCTUtils.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Views/RCTView.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Views/RCTBorderStyle.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Views/RCTPointerEvents.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Views/RCTViewControllerProtocol.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Views/RCTWrapperViewController.h \
+  /Users/micah/WebstormProjects/GrapevineMobile/node_modules/react-native/React/Views/UIView+React.h
