@@ -9,20 +9,13 @@ var height = Dimensions.get('window').height/7;
 
 var Styles = StyleSheet.create({
     container: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        justifyContent: 'flex-end',
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
     },
     map: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        marginTop: 1.5,
+        ...StyleSheet.absoluteFillObject,
     },
     eventDescription: {
         backgroundColor: 'white',

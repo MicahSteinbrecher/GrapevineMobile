@@ -1,10 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Image } from 'react-native';
 import MapView from 'react-native-maps';
 import EventDescription from './EventDescription';
 import Styles from './Styles';
 import { StackNavigator } from 'react-navigation';
 import createFragment from 'react-addons-create-fragment'; // ES6
+import { Container, Header, Item, Input, Icon, Button, Body } from 'native-base';
+import {debounce} from 'throttle-debounce';
+import dismissKeyboard from 'react-native-dismiss-keyboard';
+
 
 
 export default class Map extends React.Component {
@@ -19,9 +23,9 @@ export default class Map extends React.Component {
         super(props);
         this.state = {
             isLoading: true,
-            events: []
+            events: [],
+            search: null,
         }
-        this.onRegionChangeComplete = this.onRegionChangeComplete.bind(this);
         console.log('fired constructor success');
     }
 
@@ -56,16 +60,56 @@ export default class Map extends React.Component {
 
     }
 
+    shouldComponentUpdate(nextProps, nextState){
+        if (nextState != this.state) {
+            return true;
+        }
+    }
+    componentWillUpdate(nextProps, nextState) {
+        if (nextState.events) {
+            var events = nextState.events;
+            var colors = {};
+            for (var idx in events) {
+                var eventId = events[idx].id;
+                if (eventId == nextState.selectedEventID) {
+                    colors[eventId] = "blue";
+                } else {
+                    colors[eventId] = "red";
+                }
+            }
+
+            this.markers = null;
+            this.markers = nextState.events.map(event => (
+                <MapView.Marker
+                    key={event.id}
+                    onSelect={() => {console.log(JSON.stringify(event));
+                                                this.setState({selectedEventID: event.id,
+                                                                selectedEvent: event
+                                                })
+                                }}
+                    pinColor={colors[event.id]}
+                    coordinate={{latitude: event.venue.location.latitude, longitude: event.venue.location.longitude}}
+                />
+            ))
+        }
+
+    }
+
     onRegionChangeComplete(region){
         //get events
-        console.log(region);
+        if (region) {
+            this.setState({region: region, selectedEventID: null, selectedEvent: null});
+            this.getEvents(region);
+        }
+    }
+
+    getEvents(region) {
         fetch('https://fruitloops.herokuapp.com/get/events?lat=' + region.latitude + '&lng=' + region.longitude)
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log(responseJson.events);
                 this.setState({
                     events: responseJson.events,
-                    region: region,
                 })
             })
             .catch((error) => {
@@ -73,18 +117,28 @@ export default class Map extends React.Component {
             });
     }
 
-    render() {
-        var events = this.state.events;
-        var colors = {};
-        for (var idx in events) {
-            var eventId = events[idx].id;
-            if (eventId == this.state.selectedEventID) {
-                colors[eventId] = "blue";
-            } else {
-                colors[eventId] = "red";
-            }
+    handleKeyPress(event){
+        if (event.nativeEvent.key == 'Enter' || event.nativeEvent.key == 'Return'){
+            this.handleSearch();
         }
+    }
+    /* update region for now*/
+    handleSearch(){
+        fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+this.state.search+'&key=AIzaSyDAP8TaK4JPkNgFDVqLLwogC3a8SG3t5r4')
+            .then((response) => response.json())
+            .then((responseJson) => {
+            var location = responseJson.results[0].geometry.location;
+            var region =
+                {latitude: location.lat,
+                longitude: location.lng,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421};
+                this.setState({region: region, search: null});
+                dismissKeyboard();
+            })
+    }
 
+    render() {
         if (this.state.isLoading) {
             return (
                 <View style={Styles.container}>
@@ -92,27 +146,33 @@ export default class Map extends React.Component {
                 </View>);
         } else {
             return (
+            <Container>
+                <Header searchBar rounded>
+                    <Item>
+                        <Icon name="ios-search" />
+                        <Input placeholder="Search location" onChangeText={(text)=>this.setState({search: text})} value={this.state.search} onKeyPress={(event) => this.handleKeyPress(event)}/>
+                    </Item>
+                    <Button transparent onPress={()=> this.handleSearch()}>
+                        <Text>Search</Text>
+                    </Button>
+                </Header>
                 <View style={Styles.container}>
+
                     <MapView style={Styles.map}
                              region={this.state.region}
-                             onRegionChangeComplete={this.onRegionChangeComplete}
+                             onRegionChangeComplete={(region) => {this.onRegionChangeComplete(region)}}
                              showsUserLocation={true}
                     >
-                        {this.state.events.map(event => (
-                            <MapView.Marker
-                                key={event.id}
-                                onSelect={() => {console.log(JSON.stringify(event));
-                                                this.setState({selectedEventID: event.id,
-                                                                selectedEvent: event
-                                                })
-                                }}
-                                pinColor={colors[event.id]}
-                                coordinate={{latitude: event.venue.location.latitude, longitude: event.venue.location.longitude}}
-                            />
-                        ))}
+                        {/*<Item style={{backgroundColor: 'white'}}>*/}
+                        {/*<Input ref='search' placeholder='search by location' onChangeText={(text)=>this.setState({search: text})} value={this.state.search} onKeyPress={(event) => this.handleKeyPress(event)} />*/}
+                        {/*<Icon active name='search' onPress={()=> this.handleSearch()} />*/}
+                        {/*</Item>*/}
+                        {this.markers}
                     </MapView>
                     <EventDescription navigation={this.props.navigation} event={this.state.selectedEvent} />
                 </View>
+            </Container>
+
             );
         }
     }
