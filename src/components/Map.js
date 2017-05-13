@@ -5,7 +5,7 @@ import EventDescription from './EventDescription';
 import Styles from './Styles';
 import { StackNavigator } from 'react-navigation';
 import createFragment from 'react-addons-create-fragment'; // ES6
-import { Container, Header, Item, Input, Icon, Button, Body } from 'native-base';
+import { Container, Header, Item, Input, Icon, Button, Footer } from 'native-base';
 import {debounce} from 'throttle-debounce';
 import dismissKeyboard from 'react-native-dismiss-keyboard';
 
@@ -157,20 +157,15 @@ export default class Map extends React.Component {
                     </Button>
                 </Header>
                 <View style={Styles.container}>
-
                     <MapView style={Styles.map}
                              region={this.state.region}
                              onRegionChangeComplete={(region) => {this.onRegionChangeComplete(region)}}
                              showsUserLocation={true}
                     >
-                        {/*<Item style={{backgroundColor: 'white'}}>*/}
-                        {/*<Input ref='search' placeholder='search by location' onChangeText={(text)=>this.setState({search: text})} value={this.state.search} onKeyPress={(event) => this.handleKeyPress(event)} />*/}
-                        {/*<Icon active name='search' onPress={()=> this.handleSearch()} />*/}
-                        {/*</Item>*/}
                         {this.markers}
                     </MapView>
-                    <EventDescription navigation={this.props.navigation} event={this.state.selectedEvent} />
                 </View>
+                <EventDescription navigation={this.props.navigation} event={this.state.selectedEvent} />
             </Container>
 
             );
