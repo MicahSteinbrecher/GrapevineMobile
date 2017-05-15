@@ -8,8 +8,11 @@ var height = Dimensions.get('window').height/7;
 
 
 var Styles = StyleSheet.create({
+    segment: {
+        backgroundColor: 'white',
+    },
     container: {
-        flex: 1,
+        flex: 12,
         justifyContent: 'center',
         alignItems: 'center',
     },

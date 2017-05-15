@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Image, SegmentedControlIOS } from 'react-native';
 import MapView from 'react-native-maps';
 import EventDescription from './EventDescription';
 import Styles from './Styles';
 import { StackNavigator } from 'react-navigation';
 import createFragment from 'react-addons-create-fragment'; // ES6
-import { Container, Header, Item, Input, Icon, Button, Footer } from 'native-base';
+import { Container, Header, Item, Input, Icon, Button, Segment, Row } from 'native-base';
 import {debounce} from 'throttle-debounce';
 import dismissKeyboard from 'react-native-dismiss-keyboard';
 
@@ -156,6 +156,13 @@ export default class Map extends React.Component {
                         <Text>Search</Text>
                     </Button>
                 </Header>
+                <SegmentedControlIOS
+                    style={Styles.segment}
+                    values={['Today', 'Tomorrow', 'This Week']}
+                    onChange={(event) => {
+                        this.setState({selectedIndex: event.nativeEvent.selectedSegmentIndex});
+                      }}
+                />
                 <View style={Styles.container}>
                     <MapView style={Styles.map}
                              region={this.state.region}
