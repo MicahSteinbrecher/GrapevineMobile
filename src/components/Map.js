@@ -3,10 +3,8 @@ import { StyleSheet, Text, View, TextInput, Image, SegmentedControlIOS } from 'r
 import MapView from 'react-native-maps';
 import EventDescription from './EventDescription';
 import Styles from './Styles';
-import { StackNavigator } from 'react-navigation';
 import createFragment from 'react-addons-create-fragment'; // ES6
-import { Container, Header, Item, Input, Icon, Button, Segment, Row } from 'native-base';
-import {debounce} from 'throttle-debounce';
+import { Container, Header, Item, Input, Icon, Button } from 'native-base';
 import dismissKeyboard from 'react-native-dismiss-keyboard';
 
 
@@ -25,6 +23,7 @@ export default class Map extends React.Component {
             isLoading: true,
             events: [],
             search: null,
+            dateFilter: 'This Week',
         }
         console.log('fired constructor success');
     }
@@ -99,12 +98,12 @@ export default class Map extends React.Component {
         //get events
         if (region) {
             this.setState({region: region, selectedEventID: null, selectedEvent: null});
-            this.getEvents(region);
+            this.getEvents(region, this.state.dateFilter);
         }
     }
 
-    getEvents(region) {
-        fetch('https://fruitloops.herokuapp.com/get/events?lat=' + region.latitude + '&lng=' + region.longitude)
+    getEvents(region, dateFilter) {
+        fetch('https://fruitloops.herokuapp.com/get/events?lat=' + region.latitude + '&lng=' + region.longitude + '&dateFilter=' + dateFilter)
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log(responseJson.events);
@@ -122,6 +121,13 @@ export default class Map extends React.Component {
             this.handleSearch();
         }
     }
+
+
+    handleDateChange(value){
+        this.setState({dateFilter: value});
+        this.getEvents(this.state.region, value);
+    }
+
     /* update region for now*/
     handleSearch(){
         fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+this.state.search+'&key=AIzaSyDAP8TaK4JPkNgFDVqLLwogC3a8SG3t5r4')
@@ -158,9 +164,10 @@ export default class Map extends React.Component {
                 </Header>
                 <SegmentedControlIOS
                     style={Styles.segment}
+                    selectedIndex={2}
                     values={['Today', 'Tomorrow', 'This Week']}
                     onChange={(event) => {
-                        this.setState({selectedIndex: event.nativeEvent.selectedSegmentIndex});
+                        this.handleDateChange(event.nativeEvent.value)
                       }}
                 />
                 <View style={Styles.container}>
