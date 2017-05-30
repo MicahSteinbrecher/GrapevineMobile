@@ -8,21 +8,17 @@ var height = Dimensions.get('window').height/7;
 
 
 var Styles = StyleSheet.create({
+    segment: {
+        backgroundColor: 'white',
+    },
     container: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        justifyContent: 'flex-end',
+        flex: 12,
+        justifyContent: 'center',
         alignItems: 'center',
     },
     map: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        marginTop: 1.5,
+        ...StyleSheet.absoluteFillObject,
     },
     eventDescription: {
         backgroundColor: 'white',
@@ -51,12 +47,13 @@ var Styles = StyleSheet.create({
         height: 500,
     },
     title: {
-        fontSize: 16,
+        fontWeight: 'bold',
+        fontSize: 18,
         paddingLeft: 10,
         paddingTop: 10,
     },
     time: {
-        fontSize: 10,
+        fontSize: 14,
         paddingLeft: 10,
         paddingTop: 10,
     }

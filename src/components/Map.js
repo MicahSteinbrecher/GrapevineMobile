@@ -1,27 +1,35 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Image, SegmentedControlIOS } from 'react-native';
 import MapView from 'react-native-maps';
 import EventDescription from './EventDescription';
 import Styles from './Styles';
-import { StackNavigator } from 'react-navigation';
+import createFragment from 'react-addons-create-fragment'; // ES6
+import { Container, Header, Item, Input, Icon, Button } from 'native-base';
+import dismissKeyboard from 'react-native-dismiss-keyboard';
+
+
 
 export default class Map extends React.Component {
     static navigationOptions = {
-        header: {
+        header: () => createFragment({
             visible: false,
-        }
+        })
     };
 
     constructor(props) {
+        console.log('fired constructor');
         super(props);
         this.state = {
             isLoading: true,
-            events: []
+            events: [],
+            search: null,
+            dateFilter: 'This Week',
         }
-        this.onRegionChangeComplete = this.onRegionChangeComplete.bind(this);
+        console.log('fired constructor success');
     }
 
     componentWillMount() {
+        console.log('fired component mount');
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 this.setState({
@@ -47,19 +55,60 @@ export default class Map extends React.Component {
                     });
             }
         );
+        console.log('fired component mount success');
+
+    }
+
+    shouldComponentUpdate(nextProps, nextState){
+        if (nextState != this.state) {
+            return true;
+        }
+    }
+    componentWillUpdate(nextProps, nextState) {
+        if (nextState.events) {
+            var events = nextState.events;
+            var colors = {};
+            for (var idx in events) {
+                var eventId = events[idx].id;
+                if (eventId == nextState.selectedEventID) {
+                    colors[eventId] = "blue";
+                } else {
+                    colors[eventId] = "red";
+                }
+            }
+
+            this.markers = null;
+            this.markers = nextState.events.map(event => (
+                <MapView.Marker
+                    key={event.id}
+                    onSelect={() => {console.log(JSON.stringify(event));
+                                                this.setState({selectedEventID: event.id,
+                                                                selectedEvent: event
+                                                })
+                                }}
+                    pinColor={colors[event.id]}
+                    coordinate={{latitude: event.venue.location.latitude, longitude: event.venue.location.longitude}}
+                />
+            ))
+        }
 
     }
 
     onRegionChangeComplete(region){
         //get events
-        console.log(region);
-        fetch('https://fruitloops.herokuapp.com/get/events?lat=' + region.latitude + '&lng=' + region.longitude)
+        if (region) {
+            this.setState({region: region, selectedEventID: null, selectedEvent: null});
+            this.getEvents(region, this.state.dateFilter);
+        }
+    }
+
+    getEvents(region, dateFilter) {
+        fetch('https://fruitloops.herokuapp.com/get/events?lat=' + region.latitude + '&lng=' + region.longitude + '&dateFilter=' + dateFilter)
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log(responseJson.events);
                 this.setState({
                     events: responseJson.events,
-                    region: region,
                 })
             })
             .catch((error) => {
@@ -67,18 +116,35 @@ export default class Map extends React.Component {
             });
     }
 
-    render() {
-        var events = this.state.events;
-        var colors = {};
-        for (var idx in events) {
-            var eventId = events[idx].id;
-            if (eventId == this.state.selectedEventID) {
-                colors[eventId] = "blue";
-            } else {
-                colors[eventId] = "red";
-            }
+    handleKeyPress(event){
+        if (event.nativeEvent.key == 'Enter' || event.nativeEvent.key == 'Return'){
+            this.handleSearch();
         }
+    }
 
+
+    handleDateChange(value){
+        this.setState({dateFilter: value});
+        this.getEvents(this.state.region, value);
+    }
+
+    /* update region for now*/
+    handleSearch(){
+        fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+this.state.search+'&key=AIzaSyDAP8TaK4JPkNgFDVqLLwogC3a8SG3t5r4')
+            .then((response) => response.json())
+            .then((responseJson) => {
+            var location = responseJson.results[0].geometry.location;
+            var region =
+                {latitude: location.lat,
+                longitude: location.lng,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421};
+                this.setState({region: region, search: null});
+                dismissKeyboard();
+            })
+    }
+
+    render() {
         if (this.state.isLoading) {
             return (
                 <View style={Styles.container}>
@@ -86,27 +152,36 @@ export default class Map extends React.Component {
                 </View>);
         } else {
             return (
+            <Container>
+                <Header searchBar rounded>
+                    <Item>
+                        <Icon name="ios-search" />
+                        <Input placeholder="Search location" onChangeText={(text)=>this.setState({search: text})} value={this.state.search} onKeyPress={(event) => this.handleKeyPress(event)}/>
+                    </Item>
+                    <Button transparent onPress={()=> this.handleSearch()}>
+                        <Text>Search</Text>
+                    </Button>
+                </Header>
+                <SegmentedControlIOS
+                    style={Styles.segment}
+                    selectedIndex={2}
+                    values={['Today', 'Tomorrow', 'This Week']}
+                    onChange={(event) => {
+                        this.handleDateChange(event.nativeEvent.value)
+                      }}
+                />
                 <View style={Styles.container}>
                     <MapView style={Styles.map}
                              region={this.state.region}
-                             onRegionChangeComplete={this.onRegionChangeComplete}
+                             onRegionChangeComplete={(region) => {this.onRegionChangeComplete(region)}}
                              showsUserLocation={true}
                     >
-                        {this.state.events.map(event => (
-                            <MapView.Marker
-                                key={event.id}
-                                onSelect={() => {console.log(JSON.stringify(event));
-                                                this.setState({selectedEventID: event.id,
-                                                                selectedEvent: event
-                                                })
-                                }}
-                                pinColor={colors[event.id]}
-                                coordinate={{latitude: event.venue.location.latitude, longitude: event.venue.location.longitude}}
-                            />
-                        ))}
+                        {this.markers}
                     </MapView>
-                    <EventDescription navigation={this.props.navigation} event={this.state.selectedEvent} />
                 </View>
+                <EventDescription navigation={this.props.navigation} event={this.state.selectedEvent} />
+            </Container>
+
             );
         }
     }
