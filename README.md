@@ -1,7 +1,6 @@
-Privacy Policy: When you use GrapevineMobile it will track your current location so that it can show you geographically relevent events. This information is not used for anything else and it is erased after each app session. GrapevineMobile does not store any other personally identifiable information.
+Privacy Policy: When you use GrapevineMobile it will track your current location to show you geographically relevent events. This information is not used for anything else and is erased after each app session. GrapevineMobile does not store any other personally identifiable information.
 
-It uses your current location only for the apps expressed purpose, which is to show geographically relevant events.
-
+____________________________________________________________________________________________________________________________
 This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
 
 Below you'll find information about performing common tasks. The most recent version of this guide is available [here](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/README.md).
